@@ -37,7 +37,7 @@ function ExpensesOverview() {
       />
       <BotomTabs.Screen
         name="All Expenses"
-        component={ManageExpenses}
+        component={AllExpenses}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" color={color} size={size} />
