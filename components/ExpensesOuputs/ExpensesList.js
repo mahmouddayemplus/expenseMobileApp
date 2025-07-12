@@ -1,20 +1,35 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native'
 import React from 'react'
+import { useNavigation } from '@react-navigation/native';
+
 
 const ExpensesList = ({ expenses }) => {
+    const navigation = useNavigation();
+
+
+    function onPress(item) {
+         navigation.navigate('ManageExpenses',{item})
+
+
+    }
     return (
-        <FlatList
-            data={expenses}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-                <View style={styles.itemContainer}>
-                    <Text style={styles.description}>{item.description}</Text>
-                    <Text style={styles.amount}>${item.amount.toFixed(2)}</Text>
-                    <Text style={styles.date}>{item.date.toLocaleDateString()}</Text>
-                </View>
-            )}
-            contentContainerStyle={styles.listContainer}
-        />
+      <View style={{ flex: 1 }} > 
+            <FlatList
+                data={[...expenses].reverse()}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <Pressable onPress={() => onPress(item)} style={({ pressed }) => ({ opacity: pressed ? 0.3 : 1 })}>
+                        <View style={styles.itemContainer}>
+                            <Text style={styles.description}>{item.description}</Text>
+                            <Text style={styles.amount}>${item.amount.toFixed(2)}</Text>
+                            <Text style={styles.date}>{ new Date(item.date).toLocaleDateString()}</Text>
+                        </View>
+                    </Pressable>
+                )}
+                contentContainerStyle={styles.listContainer}
+            />
+            </View>
+         
     )
 }
 
