@@ -2,9 +2,12 @@ import { View, Text, FlatList } from 'react-native'
 import React from 'react'
 import ExpensesSummary from './ExpensesSummary'
 import ExpensesList from './ExpensesList'
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { getRequest } from '../../firebase/http'
 import { useEffect, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+
 
 const dummy_expenses = [
     { id: 'e1', description: 'Snacks', amount: 7.25, date: new Date('2025-07-08') },
@@ -45,31 +48,29 @@ const new_data = [
 
 ]
 
-const ExpensesOutput = ({   expensesPeriod }) => {
+const ExpensesOutput = ({ expensesPeriod }) => {
     const dummy_from_store = useSelector(state => state.expense)
     const [expensess, setExpenses] = useState([]);
 
 
-    useEffect(() => {
-        async function fetchData() {
-            const dataFetched = await getRequest();
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchData() {
+                const dataFetched = await getRequest();
 
-            const expensesArray = Object.keys(dataFetched).map((key) => ({
-                id: key,
-                description: dataFetched[key].description,
-                amount: parseFloat(dataFetched[key].amount),
-                date: new Date(dataFetched[key].date),
-            }));
+                const expensesArray = Object.keys(dataFetched).map((key) => ({
+                    id: key,
+                    description: dataFetched[key].description,
+                    amount: parseFloat(dataFetched[key].amount),
+                    date: new Date(dataFetched[key].date),
+                }));
 
-            // Optional: reverse by date
-            // expensesArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setExpenses(expensesArray);
+            }
 
-            setExpenses(expensesArray); // ⬅️ store in state
-        }
-
-        fetchData();
-      
-    }, []);
+            fetchData();
+        }, [])
+    );
 
 
 
