@@ -23,3 +23,19 @@ export async function deleteRequest({ id }) {
 
     console.log('Deleted:', response.status); // Optional
 }
+
+export async function updateRequest({ id, updatedData }) {
+    console.log('from updated function',updatedData);
+    
+  try {
+    const response = await axios.put(
+      `${URL}/expenses/${id}.json`,
+      updatedData // 👈 the data to update
+    );
+
+    console.log('Updated:', response.status);
+    return response.data;
+  } catch (error) {
+    console.error('Update failed:', error.message);
+  }
+}

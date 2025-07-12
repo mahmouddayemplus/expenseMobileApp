@@ -80,8 +80,7 @@ export default function App() {
          name="ManageExpenses" 
         component={ManageExpenses} 
         options={{
-          presentation:'modal'
-        }}
+         }}
         
         />
         <Stack.Screen

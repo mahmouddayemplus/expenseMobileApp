@@ -1,16 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import IconButton from '../components/IconButton';
-import { useSelector,useDispatch } from 'react-redux';
-import {deleteExpense} from '../store/expenseSlice'
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteExpense } from '../store/expenseSlice'
 import { useNavigation } from '@react-navigation/native';
 import { deleteRequest } from '../firebase/http';
+import { TextInput } from 'react-native-gesture-handler';
+import { updateRequest } from '../firebase/http';
+
+
+
 const ManageExpenses = () => {
+  const [edit, setEdit] = useState(false);
+  const [amount, setAmount] = useState();
+  const [newValue, setNewValue] = useState(0);
   const route = useRoute();
   const { item } = route.params || {};
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+
+  function handleEdit() {
+    updateRequest
+    console.log(item.id);
+    setNewValue(item.amount);
+    const updatedData = {
+      date:item.date,
+      description:item.description,
+      amount: newValue
+    }
+    setEdit(!edit)
+    console.log('edit is ', edit);
+
+    if (edit) {
+      updateRequest({id :item.id, updatedData})
+      navigation.goBack();
+    }
+
+  }
 
   return (
     <View style={styles.container}>
@@ -25,7 +53,23 @@ const ManageExpenses = () => {
 
           <View style={styles.infoBlock}>
             <Text style={styles.label}>Amount</Text>
-            <Text style={styles.value}>${item.amount.toFixed(2)}</Text>
+            {!edit ?
+              <Text style={styles.value}>${item.amount.toFixed(2)}</Text> :
+
+              <TextInput
+                style={styles.value}
+                value={String(newValue)}
+                keyboardType='decimal-pad'
+
+
+                onChangeText={(text) => setNewValue(text)} // ✅ if you want to edit it
+
+
+
+              />
+
+            }
+
           </View>
 
           <View style={styles.infoBlock}>
@@ -40,15 +84,15 @@ const ManageExpenses = () => {
               name="pencil"
               size={28}
               color="#1976d2"
-              onPress={() => console.log('Edit')}
+              onPress={handleEdit}
               style={styles.iconButton}
             />
             <IconButton
               name="trash"
               size={28}
               color="red"
-              onPress={( ) => {
-                 deleteRequest({id:item.id})
+              onPress={() => {
+                deleteRequest({ id: item.id })
                 navigation.navigate('Home')
               }}
               style={styles.iconButton}
